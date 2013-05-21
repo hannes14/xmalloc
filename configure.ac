@@ -417,9 +417,9 @@ X_COMPILABLE([__attribute__ syntax],
               [x_cv_attribute])
 if test "x${x_cv_attribute}" = "xyes" ; then
   AC_DEFINE([HAVE_ATTR], [ ],"check if __attribute__ syntax is supported")
-  if test "x${GCC}" = "xyes" -a "x${abi}" = "xelf"; then
-    X_CFLAGS_APPEND([-fvisibility=hidden])
-  fi
+dnl  if test "x${GCC}" = "xyes" -a "x${abi}" = "xelf"; then
+dnl    X_CFLAGS_APPEND([-fvisibility=hidden])
+dnl  fi
 fi
 
 dnl Check for tls_model attribute support (clang 3.0 still lacks support).
