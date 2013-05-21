@@ -194,7 +194,7 @@ __XMALLOC_LOG_CPU_CACHE_LINE =  6</programlisting>
     <caution>
       <para>
         xmalloc is dedicated for fast, packed allocation and deallocation of
-        memory blocks of size smaller than approximately 1024kB. It is not
+        memory blocks of size smaller than approximately 1024 B. It is not
         supposed to replace your system allocator.
       </para>
     </caution>
@@ -227,7 +227,7 @@ __XMALLOC_LOG_CPU_CACHE_LINE =  6</programlisting>
     <title>xBins, free lists of same sized memory chunks</title>
     <para>
       Since the emphasis of xmalloc lies in allocating and freeing lots of
-      same-sized memory chunks smaller than 1024 kB fast we keep for a number
+      same-sized memory chunks smaller than 1024 B fast we keep for a number
       of small size classes free lists. Those lists are called
       <type>xBin</type>s. Besides the lists of free memory chunks
       and its handling an <type>xBin</type> consists of meta data:
@@ -347,10 +347,10 @@ system.h  globals.h  align.h
     </para>
     <para>
     <emphasis>Note:</emphasis>
-      Memory of size > 1024 kB is handled by the operating system's memory manager. Of course
+      Memory of size > 1024 B is handled by the operating system's memory manager. Of course
       at some point, e.g. when freeing the memory again, xmalloc needs to decide whether
       the memory was allocated by xmalloc itself or by the system-wide malloc. We do not
-      consider these distinctions, but focus on memory chunks &le; 1024 kB. There xmalloc's
+      consider these distinctions, but focus on memory chunks &le; 1024 B. There xmalloc's
       main functionality lies in.
     </para>
   <sect2>
