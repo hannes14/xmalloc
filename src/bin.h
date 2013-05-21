@@ -80,7 +80,7 @@ static inline void xFreeToPage(xPage page, void *addr) {
  * STICKY BUSINESS OF BINS
  ***********************************************/
 /**
- * \fn static inline BOOLEAN xIsStickyBin(xBin bin)
+ * \fn static inline int xIsStickyBin(xBin bin)
  *
  * \brief Tests if \c bin is sticky or not.
  *
@@ -89,7 +89,7 @@ static inline void xFreeToPage(xPage page, void *addr) {
  * \return true if \c bin is sticky, false else
  *
  */
-static inline BOOLEAN xIsStickyBin(xBin bin) {
+static inline int xIsStickyBin(xBin bin) {
 #if __XMALLOC_DEBUG > 1
   printf("bin %p -- sticky %p\n", bin, bin->sticky);
 #endif
@@ -572,7 +572,7 @@ xPage xGetPageFromBin(xBin bin);
  * STATIC BIN TESTINGS
  *****************************************************/
 /**
- * \fn static inline BOOLEAN xIsStaticBin(xBin bin)
+ * \fn static inline int xIsStaticBin(xBin bin)
  *
  * \brief Tests if \c bin is an \c xStaticBin array entry.
  *
@@ -581,7 +581,7 @@ xPage xGetPageFromBin(xBin bin);
  * \return true if \c bin is an entry of \c xStaticBin, false otherwise.
  *
  */
-static inline BOOLEAN xIsStaticBin(xBin bin) {
+static inline int xIsStaticBin(xBin bin) {
   return  ((unsigned long) bin >= (unsigned long) &xStaticBin[0]) &&
   ((unsigned long) bin <= (unsigned long) &xStaticBin[__XMALLOC_MAX_BIN_INDEX]);
 }

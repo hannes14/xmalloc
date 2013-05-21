@@ -47,9 +47,6 @@ enum xError_e {
   xError_MaxError
 };
 
-// for Singular :(
-typedef int BOOLEAN;
-
 #ifndef FALSE
 #define FALSE 0
 #endif

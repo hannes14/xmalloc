@@ -102,7 +102,7 @@ static inline xPage xGetPageOfBinAddr(const void *addr) {
 }
 
 /**
- * \fn static inline BOOLEAN xIsBinAddr(const void *addr)
+ * \fn static inline int xIsBinAddr(const void *addr)
  *
  * \brief Checks if \c addr is an address in the xPages or not.
  *
@@ -111,7 +111,7 @@ static inline xPage xGetPageOfBinAddr(const void *addr) {
  * \return true if \c addr is handled by xmalloc, false else
  *
  */
-static inline BOOLEAN xIsBinAddr(const void *addr) {
+static inline int xIsBinAddr(const void *addr) {
   register unsigned long testAddr = xGetPageIndexOfAddr(addr);
 #if __XMALLOC_DEBUG > 1
   printf("------!---------\n");
@@ -193,7 +193,7 @@ void xUnregisterPagesFromRegion(void *startAddr, int numberPages);
  * INLINED PAGE TESTS / ADDRESS HANDLINGS
  ***********************************************/
 /**
- * \fn static inline BOOLEAN xIsAddrPageAligned(void *addr)
+ * \fn static inline int xIsAddrPageAligned(void *addr)
  *
  * \brief Tests if \c addr is page aligned or not.
  *
@@ -202,7 +202,7 @@ void xUnregisterPagesFromRegion(void *startAddr, int numberPages);
  * \return true if \c addr is aligned, false else
  *
  */
-static inline BOOLEAN xIsAddrPageAligned(void *addr) {
+static inline int xIsAddrPageAligned(void *addr) {
   return (((long) addr & (__XMALLOC_SIZEOF_SYSTEM_PAGE - 1)) == 0);
 }
 
@@ -220,7 +220,7 @@ static inline void* xGetPageOfAddr(void *addr) {
 }
 
 /**
- * \fn static inline BOOLEAN xIsAddrOnPage(void *addr, xPage page)
+ * \fn static inline int xIsAddrOnPage(void *addr, xPage page)
  *
  * \brief Checks if \c addr is on \c page .
  *
@@ -230,12 +230,12 @@ static inline void* xGetPageOfAddr(void *addr) {
  *
  * \return true if \c addr is on \c page , false else
  */
-static inline BOOLEAN xIsAddrOnPage(void *addr, xPage page) {
+static inline int xIsAddrOnPage(void *addr, xPage page) {
   return(xGetPageOfAddr(addr) == page);
 }
 
 /**
- * \fn static inline BOOLEAN xAreAddressesOnSamePage(void *addr1, void *addr2)
+ * \fn static inline int xAreAddressesOnSamePage(void *addr1, void *addr2)
  *
  * \brief Checks if \c addr1 and \c addr2 lie on the same page.
  *
@@ -245,7 +245,7 @@ static inline BOOLEAN xIsAddrOnPage(void *addr, xPage page) {
  *
  * \return true if \c addr1 and \c addr2 are on the same page, false else
  */
-static inline BOOLEAN xAreAddressesOnSamePage(void *addr1, void *addr2) {
+static inline int xAreAddressesOnSamePage(void *addr1, void *addr2) {
   return(xGetPageOfAddr(addr1) == xGetPageOfAddr(addr2));
 }
 

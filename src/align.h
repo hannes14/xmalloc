@@ -34,7 +34,7 @@ static inline size_t xAlignSize(size_t size) {
 
 #ifndef _XMALLOC_NDEBUG
 /**
- * \fn static inline BOOLEAN xAddressIsAligned(void *addr)
+ * \fn static inline int xAddressIsAligned(void *addr)
  *
  * \brief Checks if \c addr is aligned or not.
  *
@@ -43,7 +43,7 @@ static inline size_t xAlignSize(size_t size) {
  * \return true if \c addr is aligned, false else
  *
  */
-static inline BOOLEAN xAddressIsAligned(void *addr) {
+static inline int xAddressIsAligned(void *addr) {
   return(0 == (((unsigned long) addr) & __XMALLOC_SIZEOF_ALIGNMENT_MINUS_ONE));
 }
 #endif

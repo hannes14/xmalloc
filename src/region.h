@@ -22,7 +22,7 @@
 #include "system.h"
 
 /**
- * \fn static inline BOOLEAN xIsRegionEmpty(xRegion region)
+ * \fn static inline int xIsRegionEmpty(xRegion region)
  *
  * \brief Tests if \c region is empty or not
  *
@@ -31,7 +31,7 @@
  * \return true if \c region is empty, false else
  *
  */
-static inline BOOLEAN xIsRegionEmpty(xRegion region) {
+static inline int xIsRegionEmpty(xRegion region) {
   return ((NULL == region->current) && (NULL == region->initAddr));
 }
 

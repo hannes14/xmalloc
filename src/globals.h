@@ -31,7 +31,7 @@ extern xBin xStickyBins;
 /********************************************
  * MULTI-THREADED STUFF
  *******************************************/
-extern BOOLEAN xIsThreaded;
+extern int xIsThreaded;
 
 
 /********************************************

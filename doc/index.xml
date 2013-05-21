@@ -797,7 +797,7 @@ sizeof(xPageShifts) &le; 2^15 * sizeof(unsigned long)</programlisting>
   This is an example documentation of <function>xIsAddrOnPage</function> in <filename>src/page.h</filename>:
   <programlisting>
 /**
- * \fn static inline BOOLEAN xIsAddrOnPage(void *addr, xPage page)
+ * \fn static inline int xIsAddrOnPage(void *addr, xPage page)
  *
  * \brief Checks if \c addr is on \c page .
  *
