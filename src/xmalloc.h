@@ -161,7 +161,7 @@ static inline void* xMalloc(const size_t size) {
     addr      = xAllocFromBin(bin);
     return addr;
   } else {
-    long *ptr  = (long*) malloc(size + __XMALLOC_SIZEOF_LONG);
+    long *ptr  = (long*) malloc(size + __XMALLOC_SIZEOF_STRICT_ALIGNMENT);
     *ptr       = size;
     ptr++;
     return ptr;
