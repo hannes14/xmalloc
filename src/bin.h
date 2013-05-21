@@ -400,7 +400,7 @@ static inline void* xAllocFromFullPage(xBin bin) {
  */
 static inline void* xAllocFromBin(xBin bin) {
   register xPage page = bin->currentPage;
-  if (page->current != NULL)
+  if ((page!=NULL) && (page->current != NULL))
     return xAllocFromNonEmptyPage(page);
   else
     return xAllocFromFullPage(bin);

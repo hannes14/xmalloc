@@ -116,29 +116,4 @@ void xVfreeToSystem(void *addr, size_t size);
 void xFreeSizeToSystem(void *addr, size_t size);
 
 
-/************************************************
- * MEMORY SETTING AND COPYING BUSINESS
- ***********************************************/
-/**
- * \fn void xMemsetInWords(void *addr, int value, size_t size)
- *
- * \brief Sets memory in word size chunks.
- *
- * \param addr starting point for memory chunk to be set to value \c value .
- *
- * \param value value the memory chunk is set to
- *
- * \param length of the memory chunk, given in words
- *
- */
-static inline void xMemsetInWords(void *addr, int value, size_t length) {
-  long *ptr         = (long *) addr;
-  unsigned long val = value;
-  unsigned long len = length;
-  while (len) {
-    *ptr++  = val;
-    len--;
-  }
-}
-
 #endif
