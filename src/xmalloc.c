@@ -317,3 +317,9 @@ xBin xGetStickyBinOfBin(xBin bin) {
 
   return newBin;
 }
+
+/***********************************************
+ * statistics
+ **********************************************/
+int x_sing_opt_show_mem=0;
+struct xOpts_s x_Opts;
