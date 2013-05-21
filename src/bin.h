@@ -418,7 +418,7 @@ static inline void* xAllocFromBin(xBin bin) {
  */
 static inline void* xAlloc0FromBin(xBin bin) {
   void *addr  = xAllocFromBin(bin);
-  memset(addr, 0, bin->sizeInWords * __XMALLOC_SIZEOF_LONG);
+  memset(addr, 0, bin->sizeInWords * __XMALLOC_SIZEOF_ALIGNMENT);
   return addr;
 }
 

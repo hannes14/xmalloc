@@ -61,16 +61,18 @@ xRegion xBaseRegion    = NULL;
 /************************************************
  * ALLOCATING PAGES FOR BINS
  ***********************************************/
-xPage xAllocNewPageForBin(xBin bin) {
+xPage xAllocNewPageForBin(xBin bin)
+{
   xPage newPage;
-  void *tmp;
+  char *tmp;
   int i = 1;
 
   // block size < page size
 #if __XMALLOC_DEBUG > 1
   printf("binNumberBlocks %ld in %p\n",bin->numberBlocks,bin);
 #endif
-  if (bin->numberBlocks > 0) {
+  if (bin->numberBlocks > 0)
+  {
     newPage = xAllocSmallBlockPageForBin();
   }
   // block size > page size
@@ -82,8 +84,9 @@ xPage xAllocNewPageForBin(xBin bin) {
   newPage->current  = (void*) (((char*) newPage) +
                         __XMALLOC_SIZEOF_PAGE_HEADER);
   tmp               = newPage->current;
-  while (i < bin->numberBlocks) {
-    tmp = __XMALLOC_NEXT(tmp)  = ((void**) tmp) + bin->sizeInWords;
+  while (i < bin->numberBlocks)
+  {
+    tmp = __XMALLOC_NEXT(tmp)  = (void**) (tmp + (bin->sizeInWords<<__XMALLOC_LOG_SIZEOF_ALIGNMENT));
     i++;
   }
   __XMALLOC_NEXT(tmp) = NULL;

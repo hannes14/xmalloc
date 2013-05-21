@@ -94,7 +94,7 @@ static inline size_t xWordSizeOfBinAddr(const void *addr) {
  *
  */
 static inline size_t xSizeOfBinAddr(const void *addr) {
-  return(xWordSizeOfBinAddr(addr) << __XMALLOC_LOG_SIZEOF_LONG);
+  return(xWordSizeOfBinAddr(addr) << __XMALLOC_LOG_SIZEOF_ALIGNMENT);
 }
 
 /**
@@ -134,7 +134,7 @@ static inline size_t xSizeOfAddr(const void *addr) {
  */
 static inline size_t xWordSizeOfAddr(const void *addr) {
   return(xIsBinAddr(addr) ? xWordSizeOfBinAddr(addr) :
-          xSizeOfLargeAddr(addr) >> __XMALLOC_LOG_SIZEOF_LONG);
+          xSizeOfLargeAddr(addr) >> __XMALLOC_LOG_SIZEOF_ALIGNMENT);
 }
 //#endif
 
@@ -161,7 +161,7 @@ static inline void* xMalloc(const size_t size) {
     addr      = xAllocFromBin(bin);
     return addr;
   } else {
-    long *ptr  = (long*) malloc(size + __XMALLOC_SIZEOF_STRICT_ALIGNMENT);
+    long *ptr  = (long*) malloc(size + __XMALLOC_SIZEOF_ALIGNMENT);
     *ptr       = size;
     ptr++;
     return ptr;
@@ -193,7 +193,7 @@ static inline void* xMalloc0(size_t size)
   }
   else
   {
-    long *ptr  = (long*) malloc(size + __XMALLOC_SIZEOF_LONG);
+    long *ptr  = (long*) malloc(size + __XMALLOC_SIZEOF_ALIGNMENT);
     *ptr       = size;
     ptr++;
     memset(ptr, 0, size);
@@ -263,8 +263,8 @@ static inline void xFreeBin(void *addr, xBin bin) {
  *
  */
 static inline void xFreeLargeAddr(void *addr) {
-  char *_addr  = (char *)addr - __XMALLOC_SIZEOF_STRICT_ALIGNMENT;
-  xFreeSizeToSystem(_addr,*((size_t*) _addr) + __XMALLOC_SIZEOF_STRICT_ALIGNMENT);
+  char *_addr  = (char *)addr - __XMALLOC_SIZEOF_ALIGNMENT;
+  xFreeSizeToSystem(_addr,*((size_t*) _addr) + __XMALLOC_SIZEOF_ALIGNMENT);
 }
 
 /**
@@ -619,9 +619,6 @@ xBin xGetStickyBinOfBin(xBin bin);
 #define xPrintBinStats(F)
 #define xMarkMemoryAsStatic()
 #define xMarkAsStaticAddr(A)
-#define xMemCpyW(A, B, S)         memcpy(A,B,(S)*__XMALLOC_SIZEOF_LONG)
-#define xMemcpyW(A, B, S)         memcpy(A,B,(S)*__XMALLOC_SIZEOF_LONG)
-#define memcpyW(A, B ,C)          memcpy(A,B,(C)*__XMALLOC_SIZEOF_LONG)
 #define xFreeFunc                 xFree
 
 /* debug dummies: */

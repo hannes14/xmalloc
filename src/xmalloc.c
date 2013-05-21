@@ -62,7 +62,7 @@ xBin xGetSpecBin(size_t size) {
 
     sizeInWords   = ((-numberBlocks * __XMALLOC_SIZEOF_SYSTEM_PAGE) -
       (__XMALLOC_SIZEOF_SYSTEM_PAGE - __XMALLOC_SIZEOF_PAGE)) /
-      __XMALLOC_SIZEOF_LONG;
+      __XMALLOC_SIZEOF_ALIGNMENT;
 
     newSpecBin    = __XMALLOC_LARGE_BIN;
   } else {
@@ -77,7 +77,7 @@ xBin xGetSpecBin(size_t size) {
     __XMALLOC_ASSERT(sizeInWords >= size);
     __XMALLOC_ASSERT(numberBlocks * sizeInWords <= __XMALLOC_SIZEOF_PAGE);
 
-    sizeInWords = sizeInWords >> __XMALLOC_LOG_SIZEOF_LONG;
+    sizeInWords = sizeInWords >> __XMALLOC_LOG_SIZEOF_ALIGNMENT;
 
     if (size > __XMALLOC_MAX_SMALL_BLOCK_SIZE)
       newSpecBin  = __XMALLOC_LARGE_BIN;
