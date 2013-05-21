@@ -821,13 +821,13 @@ case $FOUR_BYTES in
   $ac_cv_sizeof_short)
      XMALLOC_INT32="short";
      ;;
-  $ac_cv_sizeof_int)
-     XMALLOC_INT32="int";
-     ;;
   $ac_cv_sizeof_long)
      XMALLOC_INT32="long";
      XMALLOC_LOG_BIT_SIZEOF_LONG=5;
      XMALLOC_LOG_SIZEOF_LONG=2;
+     ;;
+  $ac_cv_sizeof_int)
+     XMALLOC_INT32="int";
      ;;
 esac
 
