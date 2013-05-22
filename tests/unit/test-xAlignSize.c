@@ -20,8 +20,8 @@ int main() {
   int i;
   for (i = 1; i <= __XMALLOC_MAX_SMALL_BLOCK_SIZE; i++) {
     aligned  = xAlignSize(i);
-    // aligned should be a multiple of __XMALLOC_SIZEOF_STRICT_ALIGNMENT
-    __XMALLOC_ASSERT(0 == aligned % __XMALLOC_SIZEOF_STRICT_ALIGNMENT);
+    // aligned should be a multiple of __XMALLOC_SIZEOF_ALIGNMENT
+    __XMALLOC_ASSERT(0 == aligned % __XMALLOC_SIZEOF_ALIGNMENT);
   }
 
   return 0;

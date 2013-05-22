@@ -189,13 +189,13 @@ void xFreeBinRegion(xRegion reg, void *ptr) {
 */
 void* xReallocLarge(void *oldPtr, size_t newSize) {
   newSize       = xAlignSize(newSize);
-  char *oldAddr = (char *)oldPtr - __XMALLOC_SIZEOF_STRICT_ALIGNMENT;
+  char *oldAddr = (char *)oldPtr - __XMALLOC_SIZEOF_ALIGNMENT;
   char *newAddr = xReallocSizeFromSystem(oldAddr,
-                    *((size_t *) oldAddr) + __XMALLOC_SIZEOF_STRICT_ALIGNMENT,
-                    newSize + __XMALLOC_SIZEOF_STRICT_ALIGNMENT);
+                    *((long *) oldAddr) + __XMALLOC_SIZEOF_ALIGNMENT,
+                    newSize + __XMALLOC_SIZEOF_ALIGNMENT);
   
   *((size_t *) newAddr) = newSize;
-  return (void *) (newAddr + __XMALLOC_SIZEOF_STRICT_ALIGNMENT);
+  return (void *) (newAddr + __XMALLOC_SIZEOF_ALIGNMENT);
 }
 
 void* xRealloc0Large(void *oldPtr, size_t newSize) {

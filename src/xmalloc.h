@@ -94,7 +94,7 @@ static inline size_t xSizeOfBinAddr(const void *addr)
  */
 static inline size_t xSizeOfLargeAddr(const void *addr)
 {
-  return *((long *) ((char *) addr - __XMALLOC_SIZEOF_STRICT_ALIGNMENT));
+  return *((long *) ((char *) addr - __XMALLOC_SIZEOF_ALIGNMENT));
 }
 
 /**
@@ -171,9 +171,10 @@ static inline void* xMalloc0(size_t size)
   {
     long *ptr  = (long*) malloc(size + __XMALLOC_SIZEOF_ALIGNMENT);
     *ptr       = size;
-    ptr++;
-    memset(ptr, 0, size);
-    return ptr;
+    char *pptr= (char*) ptr;
+    pptr += __XMALLOC_SIZEOF_ALIGNMENT;
+    memset(pptr, 0, size);
+    return (void*)pptr;
   }
 }
 
