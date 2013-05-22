@@ -12,7 +12,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h> // for ULLONG_MAX etc.
+#include <limits.h> // for ULONG_MAX etc.
 #include <fcntl.h>
 #include <sys/mman.h>
 #include "xassert.h"

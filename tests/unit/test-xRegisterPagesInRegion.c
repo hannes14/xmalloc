@@ -27,7 +27,7 @@ int main() {
   unsigned long shift       = xGetPageShiftOfAddr(p);
   
   for (shift = startIndex + 1; shift < endIndex; shift++)
-    __XMALLOC_ASSERT(xPageShifts[shift - xMinPageIndex] == ULLONG_MAX);
+    __XMALLOC_ASSERT(xPageShifts[shift - xMinPageIndex] == ULONG_MAX);
 
   __XMALLOC_ASSERT(xMinPageIndex < xMaxPageIndex);
 

@@ -546,7 +546,7 @@ xGetPageShiftOfAddr(addr) = ((unsigned long) addr &amp; sizeof(index_part) - 1) 
       <varname>xMinPageIndex</varname> and <varname>xMaxPageIndex</varname>,
       initially defined in <filename>include/globals.h</filename> by
       <programlisting>
-xMinPageIndex = ULLONG_MAX   // max. unsigned long value
+xMinPageIndex = ULONG_MAX   // max. unsigned long value
 xMinPageIndex = 0</programlisting>
     </para>
     <para>
@@ -580,7 +580,7 @@ xMinPageIndex = 0</programlisting>
       bits in the shift part:
       <programlisting>
 xPageShifts[xGetPageIndexOfAddr(startAddr)-xMinPageIndex] |= ~(((unsigned long 1) &lt;&lt; xGetPageShiftOfAddr(startAddr)) - 1)
-xPageShifts[inbetweenIndex-xMinPageIndex]                 |= ULLONG_MAX
+xPageShifts[inbetweenIndex-xMinPageIndex]                 |= ULONG_MAX
 xPageShifts[xGetPageIndexOfAddr(endAddr)-xMinPageIndex]   |= (((unsigned long 1) &lt;&lt; (xGetPageShiftOfAddr(endAddr)+1)) - 1)</programlisting>
     </para>
     <para>

@@ -12,7 +12,7 @@
 /* zero page for initializing static bins */
 struct xPageStruct __XMALLOC_ZERO_PAGE[] = {{0, NULL, NULL, NULL, NULL}};
 
-unsigned long xMinPageIndex = ULLONG_MAX;
+unsigned long xMinPageIndex = ULONG_MAX;
 unsigned long xMaxPageIndex = 0;
 unsigned long *xPageShifts = NULL;
 
@@ -20,20 +20,24 @@ unsigned long *xPageShifts = NULL;
 /**********************************************
  * PAGE (UN-)REGISTRATION
  *********************************************/
-void xPageIndexFault(unsigned long startIndex, unsigned long endIndex) {
+void xPageIndexFault(unsigned long startIndex, unsigned long endIndex)
+{
   unsigned long indexDiff = endIndex - startIndex;
   long i;
   __XMALLOC_ASSERT((startIndex <= endIndex) &&
          (endIndex > xMaxPageIndex || startIndex < xMinPageIndex));
 
-  if (NULL == xPageShifts) {
+  if (NULL == xPageShifts)
+  {
     xPageShifts   = (unsigned long *) xAllocFromSystem((indexDiff + 1) *
                         __XMALLOC_SIZEOF_LONG);
     xMaxPageIndex = endIndex;
     xMinPageIndex = startIndex;
     for (i = 0; i <= indexDiff; i++)
       xPageShifts[i]  = 0;
-  } else {
+  }
+  else
+  {
     unsigned long oldLength = xMaxPageIndex - xMinPageIndex + 1;
     unsigned long newLength = (startIndex < xMinPageIndex ?
                                (xMaxPageIndex - startIndex) :
@@ -43,7 +47,8 @@ void xPageIndexFault(unsigned long startIndex, unsigned long endIndex) {
                                         oldLength * __XMALLOC_SIZEOF_LONG,
                                         newLength * __XMALLOC_SIZEOF_LONG);
 
-    if (startIndex < xMinPageIndex) {
+    if (startIndex < xMinPageIndex)
+    {
       unsigned long offset  = newLength - oldLength;
       for (i = oldLength - 1; i >= 0; i--)
         xPageShifts[i + offset] = xPageShifts[i];
@@ -58,7 +63,8 @@ void xPageIndexFault(unsigned long startIndex, unsigned long endIndex) {
   }
 }
 
-void xRegisterPagesInRegion(void *startAddr, int numberPages) {
+void xRegisterPagesInRegion(void *startAddr, int numberPages)
+{
   char *endAddr = (char*) startAddr +
                     (numberPages - 1) * __XMALLOC_SIZEOF_SYSTEM_PAGE;
 
@@ -69,7 +75,7 @@ void xRegisterPagesInRegion(void *startAddr, int numberPages) {
   printf("registering pages: %ld -- %ld\n",startIndex,endIndex);
 #endif
   // check indices & correct them if necessary
-  if (startIndex < xMinPageIndex || endIndex > xMaxPageIndex)
+  if ((startIndex < xMinPageIndex) || (endIndex > xMaxPageIndex))
     xPageIndexFault(startIndex, endIndex); // TOODOO
 
   shift = xGetPageShiftOfAddr(startAddr);
@@ -77,22 +83,26 @@ void xRegisterPagesInRegion(void *startAddr, int numberPages) {
   printf("registering pages -- page shift: %ld\n", xGetPageShiftOfAddr(startAddr));
   printf("indices: %ld -- %ld\n", startIndex, endIndex);
 #endif
-  if (startIndex < endIndex) {
+  if (startIndex < endIndex)
+  {
     if (0 == shift)
-      xPageShifts[startIndex - xMinPageIndex]  = ULLONG_MAX;
+      xPageShifts[startIndex - xMinPageIndex]  = ULONG_MAX;
     else
       xPageShifts[startIndex - xMinPageIndex]  |= ~((((unsigned long) 1) << shift) - 1);
     for (shift = startIndex + 1; shift < endIndex; shift++)
-      xPageShifts[shift - xMinPageIndex]  = ULLONG_MAX;
+      xPageShifts[shift - xMinPageIndex]  = ULONG_MAX;
     shift = xGetPageShiftOfAddr(endAddr);
     if ((__XMALLOC_BIT_SIZEOF_LONG - 1) == shift)
-      xPageShifts[endIndex - xMinPageIndex]  = ULLONG_MAX;
+      xPageShifts[endIndex - xMinPageIndex]  = ULONG_MAX;
     else
       xPageShifts[endIndex - xMinPageIndex]  |=
         ((((unsigned long) 1) << (shift + 1)) - 1);
-  } else {
+  }
+  else
+  {
     endIndex  = xGetPageShiftOfAddr(endAddr);
-    while (endIndex > shift) {
+    while (endIndex > shift)
+    {
       xPageShifts[startIndex - xMinPageIndex] |=
         (((unsigned long) 1) << endIndex);
       endIndex--;

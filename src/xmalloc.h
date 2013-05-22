@@ -12,7 +12,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h> // for ULLONG_MAX etc.
+#include <limits.h> // for ULONG_MAX etc.
 
 #define X_XMALLOC
 
@@ -164,7 +164,7 @@ static inline void* xMalloc0(size_t size)
   {
     xBin bin  = xSmallSize2Bin(size);
     addr      = xAllocFromBin(bin);
-    memset(addr, 0, size);
+    memset(addr, 0, bin->sizeInWords * __XMALLOC_SIZEOF_ALIGNMENT);
     return addr;
   }
   else
@@ -491,7 +491,8 @@ void* xDoRealloc(void *oldPtr, size_t oldSize, size_t newSize, int initZero);
  * \note Assumes that \c newSize =/= 0 and \c oldPtr =/= NULL .
  *
  */
-static inline void* xRealloc0(void *oldPtr, size_t newSize) {
+static inline void* xRealloc0(void *oldPtr, size_t newSize)
+{
   size_t oldSize = xSizeOfAddr(oldPtr);
   return xRealloc0Size(oldPtr, oldSize, newSize);
 }
