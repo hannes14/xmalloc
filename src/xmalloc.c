@@ -273,12 +273,16 @@ void* xRealloc0Size(void *oldPtr, size_t oldSize, size_t newSize)
     {
       newPtr  = xAllocFromBin(newBin);
       __XMALLOC_ASSERT(NULL != newPtr);
+      newSize = newBin->sizeInWords << __XMALLOC_LOG_SIZEOF_ALIGNMENT;
+      oldSize = oldBin->sizeInWords << __XMALLOC_LOG_SIZEOF_ALIGNMENT;
       memcpy(newPtr, oldPtr, (newSize> oldSize ? oldSize :
               newSize));
+      xFreeBinAddr(oldPtr);
       // initialize to zero if needed
       if (newSize > oldSize)
+      {
         memset((char *)newPtr + oldSize, 0, newSize - oldSize);
-      xFreeBinAddr(oldPtr);
+      }
     }
     else
     {
