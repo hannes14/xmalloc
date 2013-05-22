@@ -126,17 +126,21 @@ static inline size_t xSizeOfAddr(const void *addr)
  * \note It is assumed that \c size > 0.
  *
  */
-static inline void* xMalloc(const size_t size) {
+static inline void* xMalloc(const size_t size)
+{
   void *addr  = NULL;
-  if (size <= __XMALLOC_MAX_SMALL_BLOCK_SIZE) {
+  if (size <= __XMALLOC_MAX_SMALL_BLOCK_SIZE)
+  {
     xBin bin  = xSmallSize2Bin(size); 
     addr      = xAllocFromBin(bin);
     return addr;
-  } else {
+  }
+  else
+  {
     long *ptr  = (long*) malloc(size + __XMALLOC_SIZEOF_ALIGNMENT);
     *ptr       = size;
-    ptr++;
-    return ptr;
+    char *pptr= (char*) ptr;
+    return (void*)(pptr + __XMALLOC_SIZEOF_ALIGNMENT);
   }
 }
 
