@@ -213,13 +213,14 @@ static inline xSpecBin xInsertIntoSortedList(xSpecBin rootBin, xSpecBin sBin,
  * \return address of the root of the list of the special bins.
  *
  */
-static inline xSpecBin xRemoveFromSortedList(xSpecBin rootBin, xSpecBin sBin) {
+static inline xSpecBin xRemoveFromSortedList(xSpecBin rootBin, xSpecBin sBin)
+{
   // if root of spec bins is NULL, we are done
   if (NULL == rootBin)
     return NULL;
   
   xSpecBin listIterator       = rootBin->next;
-  unsigned long numberBlocks  = sBin->numberBlocks;
+  long numberBlocks  = sBin->numberBlocks;
 
   // if root of spec bins coincides with sBin, just cut it out
   if (rootBin == sBin)
@@ -230,7 +231,8 @@ static inline xSpecBin xRemoveFromSortedList(xSpecBin rootBin, xSpecBin sBin) {
   
   // we need to remember the starting point of the list of spec bins
   xSpecBin rootBinAnchor = rootBin;
-  while (NULL != listIterator && listIterator != sBin) {
+  while (NULL != listIterator && listIterator != sBin)
+  {
     if (rootBin->numberBlocks > numberBlocks)
       return rootBinAnchor;
     rootBin       = listIterator;
