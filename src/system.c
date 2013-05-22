@@ -129,11 +129,12 @@ void xVfreeToSystem(void *addr, size_t size) {
 #endif
 }
 
-void xFreeSizeToSystem(void *addr, size_t size) {
-  free(addr);
+void xFreeSizeToSystem(void *addr, size_t size)
+{
 #ifndef __XMALLOC_NDEBUG
   info.currentBytesFromMalloc -=  size;
 #endif
+  free(addr);
 }
 
 void* xVallocMmap(size_t size) {

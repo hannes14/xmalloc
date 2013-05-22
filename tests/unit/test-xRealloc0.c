@@ -17,22 +17,17 @@ int main() {
   __XMALLOC_ASSERT(NULL != p);
   __XMALLOC_ASSERT(0 == *((char *)p));
 
-  int i, j, maxWordSize;
+  int i, j, maxSize;
   // reallocate the memory as long as the reallocated block size fits in
   // xmallocs bins
   for (i = 1 ; i < 10 * __XMALLOC_MAX_SMALL_BLOCK_SIZE; i++) {
     p = xRealloc0(p,i);
     __XMALLOC_ASSERT(NULL != p);
-    // get word size of corresponding bin
-    if (i <= __XMALLOC_MAX_SMALL_BLOCK_SIZE) {
-      xBin bin  = xGetBinOfAddr(p);
-      maxWordSize = bin->sizeInWords;
-    } else {
-      maxWordSize = xWordSizeOfAddr(p);
-    }
+    // get size of corresponding bin
+    maxSize = xSizeOfAddr(p);
 
     // check if memory is set to zero
-    for (j = 0; j < maxWordSize; j++) {
+    for (j = 0; j < maxSize/sizeof(long); j++) {
       __XMALLOC_ASSERT(0 == *((long *)p + j));
     }
   }

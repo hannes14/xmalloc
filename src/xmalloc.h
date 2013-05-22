@@ -43,7 +43,6 @@ extern xBin xSize2Bin[];
   /*
 #ifdef DEBUG
 static inline xBin xGetHeadOfBinAddr(const void *addr);
-static inline size_t xWordSizeOfBinAddr(const void *addr);
 static inline size_t xSizeOfBinAddr(const void *addr);
 static inline size_t xSizeOfAddr(const void *addr);
 #endif
@@ -70,20 +69,6 @@ static inline xBin xGetHeadOfBinAddr(const void *addr) {
 }
 
 /**
- * \fn static inline size_t xWordSizeOfBinAddr(const void *addr)
- *
- * \brief Get the word size of the memory chunk stored at address \c addr .
- *
- * \param addr Const pointer to the corresponding address.
- *
- * \return size in words of address \c addr
- *
- */
-static inline size_t xWordSizeOfBinAddr(const void *addr) {
-  return xGetHeadOfBinAddr(addr)->sizeInWords;
-}
-
-/**
  * \fn static inline size_t xSizeOfBinAddr(const void *addr)
  *
  * \brief Get the size of the memory chunk stored at address \c addr .
@@ -93,8 +78,9 @@ static inline size_t xWordSizeOfBinAddr(const void *addr) {
  * \return size of address \c addr
  *
  */
-static inline size_t xSizeOfBinAddr(const void *addr) {
-  return(xWordSizeOfBinAddr(addr) << __XMALLOC_LOG_SIZEOF_ALIGNMENT);
+static inline size_t xSizeOfBinAddr(const void *addr)
+{
+  return(xGetHeadOfBinAddr(addr)->sizeInWords << __XMALLOC_LOG_SIZEOF_ALIGNMENT);
 }
 
 /**
@@ -106,8 +92,9 @@ static inline size_t xSizeOfBinAddr(const void *addr) {
  *
  * \return size of address \c addr
  */
-static inline size_t xSizeOfLargeAddr(const void *addr) {
-  return *((size_t *) ((char *) addr - __XMALLOC_SIZEOF_STRICT_ALIGNMENT));
+static inline size_t xSizeOfLargeAddr(const void *addr)
+{
+  return *((long *) ((char *) addr - __XMALLOC_SIZEOF_STRICT_ALIGNMENT));
 }
 
 /**
@@ -119,25 +106,10 @@ static inline size_t xSizeOfLargeAddr(const void *addr) {
  *
  * \return size of address \c addr
  */
-static inline size_t xSizeOfAddr(const void *addr) {
+static inline size_t xSizeOfAddr(const void *addr)
+{
   return(xIsBinAddr(addr) ? xSizeOfBinAddr(addr) : xSizeOfLargeAddr(addr));
 }
-
-/**
- * \fn static inline size_t xWordSizeOfAddr(const void *addr)
- *
- * \brief Get the word size of the memory chunk stored at address \c addr .
- *
- * \param addr Const pointer to the corresponding address.
- *
- * \return size of address \c addr
- */
-static inline size_t xWordSizeOfAddr(const void *addr) {
-  return(xIsBinAddr(addr) ? xWordSizeOfBinAddr(addr) :
-          xSizeOfLargeAddr(addr) >> __XMALLOC_LOG_SIZEOF_ALIGNMENT);
-}
-//#endif
-
 
 /*********************************************************
  * GENERAL MALLOC AND FREE STUFF
@@ -262,9 +234,10 @@ static inline void xFreeBin(void *addr, xBin bin) {
  * \note It is assumed that \c addr != NULL.
  *
  */
-static inline void xFreeLargeAddr(void *addr) {
+static inline void xFreeLargeAddr(void *addr)
+{
   char *_addr  = (char *)addr - __XMALLOC_SIZEOF_ALIGNMENT;
-  xFreeSizeToSystem(_addr,*((size_t*) _addr) + __XMALLOC_SIZEOF_ALIGNMENT);
+  xFreeSizeToSystem(_addr,*((long*) _addr) + __XMALLOC_SIZEOF_ALIGNMENT);
 }
 
 /**
