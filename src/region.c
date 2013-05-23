@@ -14,14 +14,16 @@
 /************************************************
  * REGION ALLOCATION
  ***********************************************/
-xRegion xAllocNewRegion(int minNumberPages) {
+xRegion xAllocNewRegion(int minNumberPages)
+{
   xRegion region  = xAllocFromSystem(sizeof(xRegionType));
   void *addr;
   int numberPages = __XMALLOC_MAX(minNumberPages, 
                       __XMALLOC_MIN_NUMBER_PAGES_PER_REGION);
   
   addr  = xVallocFromSystem(numberPages * __XMALLOC_SIZEOF_SYSTEM_PAGE);
-  if (NULL == addr) {
+  if (NULL == addr)
+  {
     numberPages = minNumberPages;
     addr  = xVallocFromSystem(numberPages * __XMALLOC_SIZEOF_SYSTEM_PAGE);
   }
@@ -50,25 +52,32 @@ xRegion xAllocNewRegion(int minNumberPages) {
 /************************************************
  * PAGE HANDLING IN REGIONS
  ***********************************************/
-xPage xGetConsecutivePagesFromRegion(xRegion region, int numberNeeded) {
+xPage xGetConsecutivePagesFromRegion(xRegion region, int numberNeeded)
+{
   void  *current, *page, *prev = NULL;
   char  *iter;
   int   found;
   current = region->current;
-  while (NULL != current) {
+  while (NULL != current)
+  {
     found = 1;
     iter  = current;
-    while (__XMALLOC_NEXT(iter) == (iter + __XMALLOC_SIZEOF_SYSTEM_PAGE)) {
+    while (__XMALLOC_NEXT(iter) == (iter + __XMALLOC_SIZEOF_SYSTEM_PAGE))
+    {
       iter  = __XMALLOC_NEXT(iter);
       // it is possible that (iter + __XMALLOC_SIZEOF_SYSTEM_PAGE == 0
       if (NULL == iter)
         return NULL;
       found++;
-      if (found == numberNeeded) {
+      if (found == numberNeeded)
+      {
         page  = current;
-        if (region->current == current) {
+        if (region->current == current)
+	{
           region->current = __XMALLOC_NEXT(iter);
-        } else {
+        }
+	else
+	{
           __XMALLOC_ASSERT(NULL != prev);
           __XMALLOC_NEXT(prev)  = __XMALLOC_NEXT(iter);
         }
@@ -84,35 +93,48 @@ xPage xGetConsecutivePagesFromRegion(xRegion region, int numberNeeded) {
 /**********************************************
  * FREEING OPERATIONS CONCERNING PAGES
  *********************************************/
-void xFreePagesFromRegion(xPage page, int quantity) {
+void xFreePagesFromRegion(xPage page, int quantity)
+{
   xRegion region          =   page->region;
   region->numberUsedPages -=  quantity;
-  if (0 == region->numberUsedPages) {
-    if (xBaseRegion == region) {
-      if (NULL != region->next) {
+  if (0 == region->numberUsedPages)
+  {
+    if (xBaseRegion == region)
+    {
+      if (NULL != region->next)
+      {
         xBaseRegion = region->next;
-      } else {
+      }
+      else
+      {
         xBaseRegion = region->prev;
       }
     }
     xTakeOutRegion(region);
     xFreeRegion(region);
-  } else {
-    if ((xBaseRegion != region) && xIsRegionEmpty(region)) {
+  }
+  else
+  {
+    if ((xBaseRegion != region) && xIsRegionEmpty(region))
+    {
       xTakeOutRegion(region);
       xInsertRegionAfter(region, xBaseRegion);
     }
-    if (quantity > 1) {
+    if (quantity > 1)
+    {
       int i = quantity;
       char *iterPage = (char *)page;
 
-      while (i > 1) {
+      while (i > 1)
+      {
         __XMALLOC_NEXT(iterPage)  = iterPage + __XMALLOC_SIZEOF_SYSTEM_PAGE;
         iterPage  = __XMALLOC_NEXT(iterPage);
         i--;
       }
       __XMALLOC_NEXT(iterPage)  = region->current;
-    } else {
+    }
+    else
+    {
       __XMALLOC_NEXT(page)  = region->current;
     }
     region->current = (void *)page;

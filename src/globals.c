@@ -180,7 +180,6 @@ xBin xStickyBins  = NULL;
  * STATISTICS / XINFO STUFF
  ***********************************/
 xInfo info  = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-unsigned long xSbrkInit = 0;
 
 void xUpdateInfo() {
   if (info.currentBytesFromMalloc < 0)
@@ -193,7 +192,6 @@ void xPrintInfo() {
   xUpdateInfo();
   printf("                  Current:       Max:\n");
   printf("BytesSystem:     %8ldk  %8ldk\n", info.currentBytesSystem/1024, info.maxBytesSystem/1024);
-  printf("BytesSbrk:       %8ldk  %8ldk\n", info.currentBytesSbrk/1024, info.maxBytesSbrk/1024);
   printf("BytesMmap:       %8ldk  %8ldk\n", info.currentBytesMmap/1024, info.maxBytesMmap/1024);
   printf("BytesFromMalloc: %8ldk  %8ldk\n", info.currentBytesFromMalloc/1024, info.maxBytesFromMalloc/1024);
   printf("BytesFromValloc: %8ldk  %8ldk\n", info.currentBytesFromValloc/1024, info.maxBytesFromValloc/1024);

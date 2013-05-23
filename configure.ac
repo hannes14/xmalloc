@@ -155,8 +155,10 @@ AC_FUNC_MMAP
 
 if test "$ac_cv_func_mmap_fixed_mapped"  = "yes"; then
   AC_DEFINE([VALLOC],[xVallocMmap],[valloc uses mmap])
+  AC_DEFINE([VFREE],[xVfreeToSystem],[valloc uses mmap])
 else
   AC_DEFINE([VALLOC],[xVallocNoMmap],[valloc does not use mmap])
+  AC_DEFINE([VFREE],[xVfreeNoMmap],[valloc not use mmap])
 fi
 
 AC_ARG_ENABLE([debug],
@@ -226,31 +228,6 @@ if test "x$enable_cc_silence" = "x1" ; then
   AC_DEFINE([CC_SILENCE], [ ], "not silencing irrelevant compiler warnings by
       default, since enabling this option incurs a performance penalty")
 fi
-
-# Do not enable allocation from DSS by default.
-AC_ARG_ENABLE([dss],
-  [AS_HELP_STRING([--enable-dss], [Enable allocation from DSS])],
-[if test "x$enable_dss" = "xno" ; then
-  enable_dss="0"
-else
-  enable_dss="1"
-fi
-],
-[enable_dss="0"]
-)
-
-# Check whether the BSD/SUSv1 sbrk() exists.  If not, disable DSS support.
-AC_CHECK_FUNC([sbrk], [have_sbrk="1"], [have_sbrk="0"])
-if test "x$have_sbrk" = "x1" ; then
-  AC_DEFINE([HAVE_SBRK], [1],[sbrk available ?])
-else
-  enable_dss="0"
-fi
-
-if test "x$enable_dss" = "x1" ; then
-  AC_DEFINE([DSS], [1], [dss available])
-fi
-AC_SUBST([enable_dss])
 
 dnl ===========================================================================
 dnl CPU-specific settings.

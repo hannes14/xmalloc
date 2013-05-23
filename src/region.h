@@ -31,7 +31,8 @@
  * \return true if \c region is empty, false else
  *
  */
-static inline int xIsRegionEmpty(xRegion region) {
+static inline int xIsRegionEmpty(xRegion region)
+{
   return ((NULL == region->current) && (NULL == region->initAddr));
 }
 
@@ -124,14 +125,14 @@ xPage xGetConsecutivePagesFromRegion(xRegion region, int numberNeeded);
  * \param region to be freed.
  *
  */
-static inline void xFreeRegion(xRegion region) {
-
+static inline void xFreeRegion(xRegion region)
+{
 #ifndef __XMALLOC_NDEBUG
   info.availablePages -=  region->totalNumberPages;
   info.currentRegionsAlloc--;
 #endif
   xUnregisterPagesFromRegion(region->addr, region->totalNumberPages);
-  xVfreeToSystem(region->addr, region->totalNumberPages * __XMALLOC_SIZEOF_SYSTEM_PAGE);
+  __XMALLOC_VFREE(region->addr, region->totalNumberPages * __XMALLOC_SIZEOF_SYSTEM_PAGE);
   xFreeSizeToSystem(region, sizeof(xRegionType));
 }
 

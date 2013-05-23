@@ -223,7 +223,8 @@ static inline void xFreeBinAddr(void *addr) {
  * \note It is assumed that \c addr != NULL.
  *
  */
-static inline void xFreeBin(void *addr, xBin bin) {
+static inline void xFreeBin(void *addr, xBin bin)
+{
   register void *__addr = addr;
   register xPage __page = (xPage) xGetPageOfAddr(__addr);
   xFreeToPage(__page, __addr);

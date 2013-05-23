@@ -13,6 +13,7 @@
 #include <sys/mman.h>
 #include "src/page.h" // for xIsAddrPageAligned
 #include "src/system.h"
+#include <errno.h>
 
 void* xAllocFromSystem(size_t size)
 {
@@ -22,7 +23,10 @@ void* xAllocFromSystem(size_t size)
     // try it once more
     addr  = malloc(size);
     if (NULL == addr)
+    {
+      printf("out of memory in malloc(%d)\n",errno);
       exit(1);
+    }
   }
 
 #ifndef __XMALLOC_NDEBUG
@@ -34,24 +38,6 @@ void* xAllocFromSystem(size_t size)
 #ifdef __XMALLOC_HAVE_MMAP
     if (info.currentBytesFromValloc > info.maxBytesSystem)
       info.maxBytesSystem = info.currentBytesFromValloc;
-#endif
-#ifdef __XMALLOC_HAVE_SBRK
-    if (0 == xSbrkInit)
-      xSbrkInit = (unsigned long) sbrk(0) - size;
-#if __XMALLOC_DEBUG > 1
-      printf("##########################################\n");
-      printf("xsbrkinit       %ld\n", xSbrkInit);
-      printf("maxbytessbrk    %ld\n", info.maxBytesSbrk);
-      printf("currbytesmalloc %ld\n", info.currentBytesFromMalloc);
-      printf("currbytesvalloc %ld\n", info.currentBytesFromValloc);
-      printf("##########################################\n");
-#endif
-#ifndef __XMALLOC_HAVE_MMAP
-    if (info.maxBytesFromMalloc + info.currentBytesFromValloc > info.maxBytesSbrk)
-#else
-    if (info.maxBytesFromMalloc > info.maxBytesSbrk)
-#endif
-      info.maxBytesSbrk = (unsigned long) sbrk(0) - xSbrkInit;
 #endif
   }
 #endif
@@ -65,7 +51,10 @@ void* xReallocSizeFromSystem(void *addr, size_t oldSize, size_t newSize)
   {
     newAddr = realloc(addr, newSize);
     if (NULL == newAddr)
+    {
+      printf("out of memory in realloc\n");
       exit(1);
+    }
   }
 
 #ifndef __XMALLOC_NDEBUG
@@ -78,12 +67,6 @@ void* xReallocSizeFromSystem(void *addr, size_t oldSize, size_t newSize)
     if (info.currentBytesFromValloc > info.maxBytesSystem)
       info.maxBytesSystem = info.currentBytesFromValloc;
 #endif
-#if defined(__XMALLOC_HAVE_SBRK) && !defined(__XMALLOC_HAVE_MMAP)
-    if (info.maxBytesFromMalloc + info.currentBytesFromValloc > info.maxBytesSbrk)
-#else
-    if (info.maxBytesFromMalloc > info.maxBytesSbrk)
-#endif
-      info.maxBytesSbrk = (unsigned long) sbrk(0) - xSbrkInit;
   }
 #endif
   return newAddr;
@@ -108,22 +91,6 @@ void* xVallocFromSystem(size_t size)
     if (info.maxBytesFromValloc > info.maxBytesSystem)
       info.maxBytesSystem = info.maxBytesFromValloc;
 #endif
-#if defined(__XMALLOC_HAVE_SBRK) && !defined(__XMALLOC_HAVE_MMAP)
-    if (0 == xSbrkInit)
-      xSbrkInit = (unsigned long) sbrk(0) - size;
-    if (info.maxBytesFromMalloc + info.currentBytesFromValloc > info.maxBytesSbrk)
-    {
-      info.maxBytesSbrk = (unsigned long) sbrk(0) - xSbrkInit;
-#if __XMALLOC_DEBUG > 1
-      printf("xsbrkinit       %ld\n", xSbrkInit);
-      printf("maxbytessbrk    %ld\n", info.maxBytesSbrk);
-      printf("currbytesmalloc %ld\n", info.currentBytesFromMalloc);
-      printf("currbytesvalloc %ld\n", info.currentBytesFromValloc);
-#endif
-      __XMALLOC_ASSERT(info.maxBytesSbrk >= info.currentBytesFromMalloc 
-              + info.currentBytesFromValloc);
-    }
-#endif
   }
 #endif
       
@@ -137,6 +104,15 @@ void xVfreeToSystem(void *addr, size_t size)
 #ifndef __XMALLOC_NDEBUG
   info.currentBytesFromMalloc -=  size;
 #endif
+}
+
+void xVfreeNoMmap(void *addr, size_t size)
+{
+  __XMALLOC_ASSERT(xIsAddrPageAligned(addr));
+#ifndef __XMALLOC_NDEBUG
+  info.currentBytesFromMalloc -=  size;
+#endif
+  free(addr);
 }
 
 void xFreeSizeToSystem(void *addr, size_t size)
@@ -153,10 +129,16 @@ void* xVallocMmap(size_t size)
   addr  = mmap(0, size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
   if ((void *)-1 == addr)
     return NULL;
+#ifndef __XMALLOC_NDEBUG
+  info.currentBytesFromMalloc +=  size;
+#endif
   return addr;
 }
 
 void* xVallocNoMmap(size_t size)
 {
+#ifndef __XMALLOC_NDEBUG
+  info.currentBytesFromMalloc +=  size;
+#endif
   return valloc(size);
 }

@@ -176,8 +176,6 @@ struct xRegionStruct {
 struct xInfoStruct {
   long maxBytesSystem;          /**< maximal number of bytes allocated by the system allocator */
   long currentBytesSystem;      /**< current number of bytes allocated by the system allocator */
-  long maxBytesSbrk;            /**< maximal number of bytes allocated via sbrk() */
-  long currentBytesSbrk;        /**< current number of bytes allocated via sbrk()*/
   long maxBytesMmap;            /**< maximal number of bytes allocated via mmap() */
   long currentBytesMmap;        /**< current number of bytes allocated via mmap() */
   long usedBytes;               /**< number of bytes used by the application */

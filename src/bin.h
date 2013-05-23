@@ -67,11 +67,15 @@ void xFreeToPageFault(xPage page, void *addr); // TOODOO
  * \param addr memory address to be checked
  *
  */
-static inline void xFreeToPage(xPage page, void *addr) {
-  if (page->numberUsedBlocks > 0L) {
+static inline void xFreeToPage(xPage page, void *addr)
+{
+  if (page->numberUsedBlocks > 0L)
+  {
     *((void **) addr) = page->current;
     page->current     = addr;
-  } else {
+  }
+  else
+  {
     xFreeToPageFault(page, addr);
   }
 }
