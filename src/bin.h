@@ -5,7 +5,7 @@
  * \brief  Bin handlers for xmalloc.
  *         This file is part of XMALLOC, licensed under the GNU General
  *         Public License version 3. See COPYING for more information.
- * \note   There are some page based functions implemented in the bin.* 
+ * \note   There are some page based functions implemented in the bin.*
  *         files since they depend internally on the strong page <-> bin
  *         connection.
  */
@@ -33,7 +33,7 @@
 // void xUnGetSpecBin(xBin *bin); => see xmalloc.h
 
 /************************************************
- * FREEING OPERATIONS CONCERNING PAGES: THOSE 
+ * FREEING OPERATIONS CONCERNING PAGES: THOSE
  * DEPEND ON BINS => THEY ARE IMPLEMENTED HERE
  ***********************************************/
 /**
@@ -78,6 +78,7 @@ static inline void xFreeToPage(xPage page, void *addr)
   {
     xFreeToPageFault(page, addr);
   }
+  //printf("free p=%p, numberUsedBlocks:%d\n",page,page->numberUsedBlocks);
 }
 
 /************************************************
@@ -208,7 +209,7 @@ static inline xSpecBin xInsertIntoSortedList(xSpecBin rootBin, xSpecBin sBin,
  *
  * \brief Removes \c sBin from list of spec bins beginning at \c rootBin .
  *
- * \param rootBin \c xSpecBin usually root of the list of special bins, but can be 
+ * \param rootBin \c xSpecBin usually root of the list of special bins, but can be
  * any \c xSpecBin .
  *
  * \param sBin \c xSpecBin special bin to be removed from the list of special
@@ -222,7 +223,7 @@ static inline xSpecBin xRemoveFromSortedList(xSpecBin rootBin, xSpecBin sBin)
   // if root of spec bins is NULL, we are done
   if (NULL == rootBin)
     return NULL;
-  
+
   xSpecBin listIterator       = rootBin->next;
   long numberBlocks  = sBin->numberBlocks;
 
@@ -230,9 +231,9 @@ static inline xSpecBin xRemoveFromSortedList(xSpecBin rootBin, xSpecBin sBin)
   if (rootBin == sBin)
     return listIterator;
   // now we really need to search for sBin in the list of spec bins
-  // NOTE: If root of spec bins has a greater number of blocks, then we are 
+  // NOTE: If root of spec bins has a greater number of blocks, then we are
   // done at the first step since sBin cannot be in this list at all
-  
+
   // we need to remember the starting point of the list of spec bins
   xSpecBin rootBinAnchor = rootBin;
   while (NULL != listIterator && listIterator != sBin)
@@ -263,22 +264,31 @@ static inline xSpecBin xRemoveFromSortedList(xSpecBin rootBin, xSpecBin sBin)
  * \param page \c xPage taken out of \c bin
  *
  */
-static inline void xTakeOutPageFromBin(xPage page, xBin bin) {
-  if (bin->currentPage == page) {
-    if (NULL == page->next) {
-      if (NULL == page->prev) {
+static inline void xTakeOutPageFromBin(xPage page, xBin bin)
+{
+  if (bin->currentPage == page)
+  {
+    if (NULL == page->next)
+    {
+      if (NULL == page->prev)
+      {
         bin->lastPage = NULL;
         bin->currentPage  = __XMALLOC_ZERO_PAGE;
         return;
       }
       bin->currentPage  = page->prev;
-    } else {
+    }
+    else
+    {
       bin->currentPage  = page->next;
     }
   }
-  if (bin->lastPage == page) {
+  if (bin->lastPage == page)
+  {
     bin->lastPage = page->prev;
-  } else {
+  }
+  else
+  {
     page->next->prev  = page->prev;
   }
   if (NULL != page->prev)
@@ -366,15 +376,20 @@ xPage xAllocBigBlockPagesForBin(int numberNeeded);
  * \return address of allocated memory
  *
  */
-static inline void* xAllocFromFullPage(xBin bin) {
+static inline void* xAllocFromFullPage(xBin bin)
+{
   xPage newPage;
-  if (__XMALLOC_ZERO_PAGE != bin->currentPage) {
+  if (__XMALLOC_ZERO_PAGE != bin->currentPage)
+  {
     bin->currentPage->numberUsedBlocks  = 0;
   }
 
-  if(!bin->sticky && (NULL != bin->currentPage->next)) {
+  if(!bin->sticky && (NULL != bin->currentPage->next))
+  {
     newPage = bin->currentPage->next;
-  } else {
+  }
+  else
+  {
     newPage = xAllocNewPageForBin(bin);
     xInsertPageToBin(newPage, bin);
   }
@@ -404,7 +419,8 @@ static inline void* xAllocFromFullPage(xBin bin) {
  * \return address of allocated memory
  *
  */
-static inline void* xAllocFromBin(xBin bin) {
+static inline void* xAllocFromBin(xBin bin)
+{
   register xPage page = bin->currentPage;
   if ((page!=NULL) && (page->current != NULL))
     return xAllocFromNonEmptyPage(page);
@@ -422,7 +438,8 @@ static inline void* xAllocFromBin(xBin bin) {
  * \return address of allocated memory
  *
  */
-static inline void* xAlloc0FromBin(xBin bin) {
+static inline void* xAlloc0FromBin(xBin bin)
+{
   void *addr  = xAllocFromBin(bin);
   memset(addr, 0, bin->sizeInWords * __XMALLOC_SIZEOF_ALIGNMENT);
   return addr;
@@ -446,7 +463,8 @@ static inline void* xAlloc0FromBin(xBin bin) {
  * \return sticky of \c page
  *
  */
-static inline unsigned long xGetStickyOfPage(xPage page) {
+static inline unsigned long xGetStickyOfPage(xPage page)
+{
   return (((unsigned long) page->bin) &
       (unsigned long) __XMALLOC_SIZEOF_VOIDP_MINUS_ONE);
 }
@@ -461,7 +479,8 @@ static inline unsigned long xGetStickyOfPage(xPage page) {
  * \param bin \c xBin .
  *
  */
-static inline void xSetTopBinAndStickyOfPage(xPage page, xBin bin) {
+static inline void xSetTopBinAndStickyOfPage(xPage page, xBin bin)
+{
   page->bin = (void *)(((unsigned long)bin->sticky & (__XMALLOC_SIZEOF_VOIDP - 1))
                   + (unsigned long)bin);
 }
@@ -476,7 +495,8 @@ static inline void xSetTopBinAndStickyOfPage(xPage page, xBin bin) {
  * \param bin \c xBin .
  *
  */
-static inline void xSetTopBinOfPage(xPage page, xBin bin) {
+static inline void xSetTopBinOfPage(xPage page, xBin bin)
+{
   page->bin = (void *)((unsigned long)bin + xGetStickyOfPage(page));
 }
 
@@ -490,11 +510,12 @@ static inline void xSetTopBinOfPage(xPage page, xBin bin) {
  * \return top \c xBin of \c xPage \c page
  *
  */
-static inline xBin xGetTopBinOfPage(const xPage page) {
+static inline xBin xGetTopBinOfPage(const xPage page)
+{
 #if __XMALLOC_DEBUG > 1
   printf("page %p -- gtpoba %p\n", page, page->bin);
 #endif
-  return (xBin) (((unsigned long) page->bin) & 
+  return (xBin) (((unsigned long) page->bin) &
       ~((unsigned long) __XMALLOC_SIZEOF_VOIDP_MINUS_ONE));
 }
 
@@ -508,8 +529,9 @@ static inline xBin xGetTopBinOfPage(const xPage page) {
  * \param sBin \c xBin sticky
  *
  */
-static inline void xSetStickyOfPage(xPage page, xBin bin) {
-  page->bin = (void *)(((unsigned long)bin->sticky 
+static inline void xSetStickyOfPage(xPage page, xBin bin)
+{
+  page->bin = (void *)(((unsigned long)bin->sticky
                           & ((unsigned long)__XMALLOC_SIZEOF_VOIDP - 1)) +
                         (unsigned long)xGetTopBinOfPage(page));
 }
@@ -524,7 +546,8 @@ static inline void xSetStickyOfPage(xPage page, xBin bin) {
  * \return top \c xBin of \c xPage \c page
  *
  */
-static inline xBin xGetBinOfPage(const xPage page) {
+static inline xBin xGetBinOfPage(const xPage page)
+{
   unsigned long sticky  = xGetStickyOfPage(page);
   xBin bin              = xGetTopBinOfPage(page);
   if (!xIsStickyBin(bin))
@@ -544,7 +567,8 @@ static inline xBin xGetBinOfPage(const xPage page) {
  * \return \c xBin of address \c addr
  *
  */
-static inline xBin xGetBinOfAddr(void *addr) {
+static inline xBin xGetBinOfAddr(void *addr)
+{
   return xGetBinOfPage((xPage) xGetPageOfAddr(addr));
 }
 
@@ -558,7 +582,8 @@ static inline xBin xGetBinOfAddr(void *addr) {
  * \param bin \c xbin .
  *
  */
-static inline void xSetBinOfPage(xPage page, xBin bin) {
+static inline void xSetBinOfPage(xPage page, xBin bin)
+{
   page->bin = (void *)((unsigned long)bin + xGetStickyOfPage(page));
 }
 
@@ -587,7 +612,8 @@ xPage xGetPageFromBin(xBin bin);
  * \return true if \c bin is an entry of \c xStaticBin, false otherwise.
  *
  */
-static inline int xIsStaticBin(xBin bin) {
+static inline int xIsStaticBin(xBin bin)
+{
   return  ((unsigned long) bin >= (unsigned long) &xStaticBin[0]) &&
   ((unsigned long) bin <= (unsigned long) &xStaticBin[__XMALLOC_MAX_BIN_INDEX]);
 }

@@ -97,21 +97,25 @@ xPage xAllocNewPageForBin(xBin bin)
   return newPage;
 }
 
-xPage xAllocSmallBlockPageForBin() {
+xPage xAllocSmallBlockPageForBin()
+{
   xPage newPage;
 
   if (NULL == xBaseRegion)
     xBaseRegion  = xAllocNewRegion(1);
 
-  while (1) {
+  while (1)
+  {
     // current page in region can be used
-    if (NULL != xBaseRegion->current) {
+    if (NULL != xBaseRegion->current)
+    {
       newPage             = xBaseRegion->current;
       xBaseRegion->current = __XMALLOC_NEXT(newPage);
       goto Found;
     }
     // there exist pages in this region we can use
-    if (xBaseRegion->numberInitPages > 0) {
+    if (xBaseRegion->numberInitPages > 0)
+    {
       newPage = (xPage) xBaseRegion->initAddr;
       xBaseRegion->numberInitPages--;
       if (xBaseRegion->numberInitPages > 0)
@@ -121,9 +125,12 @@ xPage xAllocSmallBlockPageForBin() {
       goto Found;
     }
     // there exists already a next region we can allocate from
-    if (NULL != xBaseRegion->next) {
+    if (NULL != xBaseRegion->next)
+    {
       xBaseRegion  = xBaseRegion->next;
-    } else {
+    }
+    else
+    {
       xRegion region  = xAllocNewRegion(1);
       region->prev    = xBaseRegion;
       xBaseRegion     = xBaseRegion->next  = region;
@@ -143,8 +150,9 @@ xPage xAllocSmallBlockPageForBin() {
   return newPage;
 }
 
-xPage xAllocBigBlockPagesForBin(int numberNeeded) {
-  register xPage page;
+xPage xAllocBigBlockPagesForBin(int numberNeeded)
+{
+  register xPage page=NULL;
   xRegion region;
 
   // take care that there is at least 1 region active, if
@@ -153,27 +161,34 @@ xPage xAllocBigBlockPagesForBin(int numberNeeded) {
     xBaseRegion  = xAllocNewRegion(numberNeeded);
 
   region  = xBaseRegion;
-  while (1) {
+  while (1)
+  {
     // memory chunk fits in this region
-    if (region->numberInitPages >= numberNeeded) {
+    if (region->numberInitPages >= numberNeeded)
+    {
       page                    =   (xPage) region->initAddr;
       region->numberInitPages -=  numberNeeded;
-      if (region->numberInitPages > 0) {
+      if (region->numberInitPages > 0)
+      {
         region->initAddr  +=  numberNeeded * __XMALLOC_SIZEOF_SYSTEM_PAGE;
       }
       else
         region->initAddr  =   NULL;
-      goto Found;
+      //goto Found;
     }
     // check if there is a consecutive chunk of numberNeeded pages in region we
     // can get
-    page  = xGetConsecutivePagesFromRegion(region, numberNeeded);
+    if (page==NULL)
+      page  = xGetConsecutivePagesFromRegion(region, numberNeeded);
     if (NULL != page)
       goto Found;
     // there already exists a next region we can allocate from
-    if (NULL != region->next) {
+    if (NULL != region->next)
+    {
       region  = region->next;
-    } else {
+    }
+    else
+    {
       xRegion newRegion = xAllocNewRegion(numberNeeded);
       region->next      = newRegion;
       newRegion->prev   = region;
@@ -185,7 +200,8 @@ xPage xAllocBigBlockPagesForBin(int numberNeeded) {
   page->region            =   region;
   region->numberUsedPages +=  numberNeeded;
 
-  if (xBaseRegion != region) {
+  if (xBaseRegion != region)
+  {
     xTakeOutRegion(region);
     xInsertRegionBefore(region, xBaseRegion);
   }
@@ -202,10 +218,12 @@ xPage xAllocBigBlockPagesForBin(int numberNeeded) {
 /**********************************************
  * PAGE FREEING
  *********************************************/
-void xFreeToPageFault(xPage page, void *addr) {
+void xFreeToPageFault(xPage page, void *addr)
+{
   __XMALLOC_ASSERT(page->numberUsedBlocks <= 0L);
   xBin bin  = xGetBinOfPage(page);
-  if ((NULL != page->current) || (bin->numberBlocks <= 1)) {
+  if ((NULL != page->current) || (bin->numberBlocks <= 1))
+  {
     // collect all blocks of page
     xTakeOutPageFromBin(page, bin);
     // page can be freed
@@ -213,7 +231,9 @@ void xFreeToPageFault(xPage page, void *addr) {
       xFreePagesFromRegion(page,1);
     else
       xFreePagesFromRegion(page, - bin->numberBlocks);
-  } else {
+  }
+  else
+  {
     // page was full
     page->current           = addr;
     page->numberUsedBlocks  = bin->numberBlocks - 2;

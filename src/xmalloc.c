@@ -32,7 +32,7 @@ void* xGetNewPage() {
     if (reg->numberUsedBlocks > 0) {
       for (i = 0; i < __XMALLOC_PAGES_PER_REGION; i++) {
         if (reg->bits[i] == '\0') {
-	        reg->numberUsedBlocks--;
+                reg->numberUsedBlocks--;
           reg->bits[i] = '\1';
           return (void*)(reg->start + i * 4096UL);
         }
@@ -47,13 +47,15 @@ void* xGetNewPage() {
 /************************************************
  * SPEC-BIN STUFF
  ***********************************************/
-xBin xGetSpecBin(size_t size) {
+xBin xGetSpecBin(size_t size)
+{
   xBin newSpecBin;
   long numberBlocks;
   long sizeInWords;
 
   size  = xAlignSize(size);
-  if (size > __XMALLOC_SIZEOF_PAGE) {
+  if (size > __XMALLOC_SIZEOF_PAGE)
+  {
     // large memory chunks
     // reserve memory for page header
     numberBlocks  = - (long)
@@ -65,7 +67,9 @@ xBin xGetSpecBin(size_t size) {
       __XMALLOC_SIZEOF_ALIGNMENT;
 
     newSpecBin    = __XMALLOC_LARGE_BIN;
-  } else {
+  }
+  else
+  {
     // small memory chunks
     // reserve memory for page header
     numberBlocks  = __XMALLOC_SIZEOF_PAGE / size;
@@ -85,10 +89,12 @@ xBin xGetSpecBin(size_t size) {
       newSpecBin  = xSmallSize2Bin(size);
   }
   if (__XMALLOC_LARGE_BIN == newSpecBin ||
-      numberBlocks > newSpecBin->numberBlocks) {
+      numberBlocks > newSpecBin->numberBlocks)
+  {
     xSpecBin specBin  = xFindInSortedList(xBaseSpecBin, numberBlocks);
     // we get a specBin from the list search in above
-    if (NULL != specBin) {
+    if (NULL != specBin)
+    {
       (specBin->ref)++;
       __XMALLOC_ASSERT(NULL != specBin->bin &&
           specBin->bin->numberBlocks  ==  specBin->numberBlocks &&
@@ -109,24 +115,31 @@ xBin xGetSpecBin(size_t size) {
     specBin->bin->sticky        = 0;
     xBaseSpecBin  = xInsertIntoSortedList(xBaseSpecBin, specBin, numberBlocks);
     return specBin->bin;
-  } else {
+  }
+  else
+  {
     return newSpecBin;
   }
 }
 
-void xUnGetSpecBin(xBin *oldBin, int remove) {
+void xUnGetSpecBin(xBin *oldBin, int remove)
+{
   xBin bin  = *oldBin;
-  if (!xIsStaticBin(bin)) {
+  if (!xIsStaticBin(bin))
+  {
     xSpecBin sBin = xFindInSortedList(xBaseSpecBin, bin->numberBlocks);
 
     __XMALLOC_ASSERT(NULL != sBin);
     __XMALLOC_ASSERT(bin == sBin->bin);
 
-    if (NULL != sBin) {
+    if (NULL != sBin)
+    {
       sBin->ref--;
-      if (0 == sBin->ref || remove) {
+      if (0 == sBin->ref || remove)
+      {
         //xFreeKeptAddrFromBin(sBin->bin);
-        if (NULL == sBin->bin->lastPage || remove) {
+        if (NULL == sBin->bin->lastPage || remove)
+        {
           xBaseSpecBin  = xRemoveFromSortedList(xBaseSpecBin, sBin);
           xFreeSize(sBin->bin, sizeof(xBinType));
           xFreeSize(sBin, sizeof(xSpecBinType));
@@ -142,9 +155,9 @@ xRegion xIsSmallBlock(void *ptr) {
   xRegion reg           = xBaseRegion;
   unsigned long longPtr = (unsigned long)ptr;
   while (reg != NULL) {
-    if ((reg->start > longPtr) || (reg->end <= longPtr)) 
+    if ((reg->start > longPtr) || (reg->end <= longPtr))
       reg = reg->next;
-    else 
+    else
       return reg;
   }
   return NULL;
@@ -155,9 +168,9 @@ xRegion xIsBinBlock(unsigned long unsignedLongPtr) {
   while (reg != NULL) {
     unsigned long regStart  = reg->start;
     if ((regStart <= unsignedLongPtr) && (unsignedLongPtr < reg->end)) {
-      if (reg->bits[(unsignedLongPtr - regStart) / 4096UL]) 
+      if (reg->bits[(unsignedLongPtr - regStart) / 4096UL])
         return reg;
-      else 
+      else
         return NULL;
     }
     reg = reg->next;
@@ -174,13 +187,13 @@ void xFreeBinRegion(xRegion reg, void *ptr) {
   } else {
     xBin bin  = page->bin;
     unsigned long unsignedLongPtr = (unsigned long)ptr;
-    if (page->next != NULL) 
-      page->next->prev  = page->prev; 
-    if (page->prev != NULL) 
-      page->prev->next  = page->next; 
-    if (bin->lastPage == page) 
+    if (page->next != NULL)
+      page->next->prev  = page->prev;
+    if (page->prev != NULL)
+      page->prev->next  = page->next;
+    if (bin->lastPage == page)
       bin->lastPage = page->prev;
-    if (bin->currentPage == page) 
+    if (bin->currentPage == page)
       bin->currentPage  = page->prev;
     reg->numberUsedBlocks++;
     reg->bits[(unsignedLongPtr - reg->start) / 4096]  = '\0';
@@ -193,7 +206,7 @@ void* xReallocLarge(void *oldPtr, size_t newSize) {
   char *newAddr = xReallocSizeFromSystem(oldAddr,
                     *((long *) oldAddr) + __XMALLOC_SIZEOF_ALIGNMENT,
                     newSize + __XMALLOC_SIZEOF_ALIGNMENT);
-  
+
   *((size_t *) newAddr) = newSize;
   return (void *) (newAddr + __XMALLOC_SIZEOF_ALIGNMENT);
 }
@@ -201,12 +214,12 @@ void* xReallocLarge(void *oldPtr, size_t newSize) {
 void* xRealloc0Large(void *oldPtr, size_t newSize) {
   size_t oldSize  = xSizeOfLargeAddr(oldPtr);
   char *newPtr    = xReallocLarge(oldPtr, newSize);
-  
+
   newSize = xSizeOfLargeAddr(newPtr);
   // check if we need to initialize stuff to zero
   if (newSize > oldSize)
     memset(newPtr + oldSize, 0, newSize - oldSize);
-  
+
   return (void *) newPtr;
 }
 
@@ -296,8 +309,8 @@ void* xRealloc0Size(void *oldPtr, size_t oldSize, size_t newSize)
   return newPtr;
 }
 
-void xFreeSizeFunc(void *ptr, size_t size) { 
-  xFree(ptr); 
+void xFreeSizeFunc(void *ptr, size_t size) {
+  xFree(ptr);
 }
 
 

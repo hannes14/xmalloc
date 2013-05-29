@@ -119,7 +119,7 @@ static inline size_t xSizeOfAddr(const void *addr)
  *
  * \brief Allocates memory of size class \c size .
  *
- * \param size Const \c size_t giving size class. 
+ * \param size Const \c size_t giving size class.
  *
  * \return address of memory allocated
  *
@@ -131,7 +131,7 @@ static inline void* xMalloc(const size_t size)
   void *addr  = NULL;
   if (size <= __XMALLOC_MAX_SMALL_BLOCK_SIZE)
   {
-    xBin bin  = xSmallSize2Bin(size); 
+    xBin bin  = xSmallSize2Bin(size);
     addr      = xAllocFromBin(bin);
     return addr;
   }
@@ -200,7 +200,7 @@ static inline void* xmalloc(const size_t size) {
  *
  * \brief Frees memory stored at address \c addr .
  *
- * \param addr address of memory to be deleted. 
+ * \param addr address of memory to be deleted.
  *
  * \note It is assumed that \c addr != NULL.
  *
@@ -216,9 +216,9 @@ static inline void xFreeBinAddr(void *addr) {
  *
  * \brief Frees memory stored at address \c addr .
  *
- * \param addr address of memory to be deleted. 
+ * \param addr address of memory to be deleted.
  *
- * \param bin \c xBin \c addr is stored in. 
+ * \param bin \c xBin \c addr is stored in.
  *
  * \note It is assumed that \c addr != NULL.
  *
@@ -235,7 +235,7 @@ static inline void xFreeBin(void *addr, xBin bin)
  *
  * \brief Frees memory stored at address \c addr .
  *
- * \param addr address of memory to be deleted. 
+ * \param addr address of memory to be deleted.
  *
  * \note It is assumed that \c addr != NULL.
  *
@@ -251,12 +251,13 @@ static inline void xFreeLargeAddr(void *addr)
  *
  * \brief Frees memory stored at address \c addr .
  *
- * \param addr address of memory to be deleted. 
+ * \param addr address of memory to be deleted.
  *
  * \note It is assumed that \c addr != NULL.
  *
  */
-static inline void xFree(void *addr) {
+static inline void xFree(void *addr)
+{
   if (xIsBinAddr(addr))
     xFreeBinAddr(addr);
   else
@@ -268,7 +269,7 @@ static inline void xFree(void *addr) {
  *
  * \brief Frees memory stored at address \c addr with a size check included.
  *
- * \param addr address of memory to be deleted. 
+ * \param addr address of memory to be deleted.
  *
  * \param size size of memory to be deleted.
  *
@@ -289,7 +290,7 @@ static inline void xFreeSize(void *addr, size_t size) {
  *
  * \brief Frees memory stored at address \c addr .
  *
- * \param addr address of memory to be deleted. 
+ * \param addr address of memory to be deleted.
  *
  * \note If \c addr == NULL, then freeing does not take place.
  *
@@ -551,7 +552,8 @@ static inline void* xrealloc0(void *oldPtr, size_t newSize) {
  *
  * \return address of new memory chunk
  */
-static inline void* xrealloc(void *oldPtr, size_t newSize) {
+static inline void* xrealloc(void *oldPtr, size_t newSize)
+{
   if (!newSize)
     newSize = (size_t) 1;
   if (NULL != oldPtr)
@@ -560,13 +562,15 @@ static inline void* xrealloc(void *oldPtr, size_t newSize) {
     return xMalloc(newSize);
 }
 
-static inline char* xStrDup(const char *str) { 
+static inline char* xStrDup(const char *str)
+{
   size_t length = strlen(str);
   char *newStr  = (char *)xMalloc(length + 1);
   return strcpy(newStr, str);
 }
 
-static inline void* xMemDup(void *str) { 
+static inline void* xMemDup(void *str)
+{
   size_t oldSize = xSizeOfAddr(str);
   void *newPtr   = xMalloc(oldSize);
   memcpy(newPtr, str, oldSize);
@@ -593,7 +597,7 @@ xBin xGetStickyBinOfBin(xBin bin);
 
 #define xAlloc0Aligned(S)       xMalloc0(S)
 #define xAllocAligned(S)        xMalloc(S)
-#define xInitInfo()             
+#define xInitInfo()
 #define xInitGetBackTrace()
 #define xPrintStats(F)
 #define xPrintBinStats(F)
