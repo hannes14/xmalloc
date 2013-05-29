@@ -104,6 +104,18 @@ void* xVallocNoMmap(size_t size);
 void xVfreeToSystem(void *addr, size_t size);
 
 /**
+ * \fn void* xVfreeNoMmap(void *page, size_t size)
+ *
+ * \brief Frees memory at \c addr to system.
+ *
+ * \param addr address to be freed
+ *
+ * \param size \size_t of the memory chunk
+ *
+ */
+void xVfreeNoMmap(void *addr, size_t size);
+
+/**
  * \fn void* xFreeToSystem(void *page, size_t size)
  *
  * \brief Frees memory at \c addr to system.
