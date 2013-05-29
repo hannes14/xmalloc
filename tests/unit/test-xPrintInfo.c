@@ -19,8 +19,8 @@ int main() {
   B[0] = xMalloc0(64);
   
   xUpdateInfo();
-  __XMALLOC_ASSERT(info.currentBytesFromMalloc/1024 == 2048); 
-  __XMALLOC_ASSERT(info.maxBytesFromMalloc/1024 == 2048);
+  __XMALLOC_ASSERT((info.currentBytesFromMalloc+info.currentBytesFromValloc)/1024 == 2048); 
+  __XMALLOC_ASSERT((info.maxBytesFromMalloc+info.maxBytesFromValloc)/1024 == 2048);
   __XMALLOC_ASSERT(info.currentBytesSystem/1024 == 0); 
   __XMALLOC_ASSERT(info.maxBytesSystem/1024 == 0); 
   __XMALLOC_ASSERT(info.currentRegionsAlloc == 1); 
